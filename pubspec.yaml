@@ -38,6 +38,11 @@ dependencies:
   shimmer: ^2.0.0
   lottie:
   http: ^0.13.5
+  google_sign_in:
+  firebase_core:
+  firebase_auth:
+  url_launcher: ^6.1.5
+  share:
 
 dev_dependencies:
   flutter_test:

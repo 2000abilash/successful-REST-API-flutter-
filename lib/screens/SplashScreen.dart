@@ -2,7 +2,8 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'loginscreen.dart';
+import '../services/auth_service.dart';
+
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class _SplashState extends State<Splash> {
               fit: BoxFit.cover
               ),
             ),
-      nextScreen: LoginScreen(),
+      nextScreen: AuthService().handleAuthState(),
       splashTransition: SplashTransition.sizeTransition,
       animationDuration:Duration(milliseconds: 1300),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:success_api/services/apiServices.dart';
 
+import '../widgets/allCategoryShimmer.dart';
 import 'category_product.dart';
 
 class AllCategory extends StatefulWidget {
@@ -35,9 +36,9 @@ class _AllCategoryState extends State<AllCategory> {
         backgroundColor: Colors.red,
         centerTitle: true,
       ),
-      body: isLoaded?Center(
-        child: CircularProgressIndicator(),
-      ):ListView.builder(
+      body:
+      isLoaded?
+      CategoryShimmerWidget():ListView.builder(
           itemCount:allCategory.length,
           itemBuilder: (context,index){
             var items =allCategory[index].toString().toUpperCase();

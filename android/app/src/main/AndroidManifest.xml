@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.success_api">
    <application
-        android:label="success_api"
+        android:label="Success API"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

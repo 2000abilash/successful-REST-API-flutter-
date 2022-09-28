@@ -1,10 +1,20 @@
 import 'dart:io';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:lottie/lottie.dart';
+import 'package:success_api/widgets/openWebUrlLauncher.dart';
+
 import 'package:success_api/screens/productdetail.dart';
 import 'package:success_api/services/apiServices.dart';
-
 import '../models/AllProduct.dart';
+import '../services/auth_service.dart';
+import '../widgets/mailUrlLauncher.dart';
+import '../widgets/phoneUrlLauncher.dart';
+import '../widgets/shareFiles.dart';
+import '../widgets/shimmer_widget.dart';
+import '../widgets/smsUrlLauncher.dart';
 import 'all_category.dart';
 import 'cart_screen.dart';
 
@@ -19,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<AllProduct> allProducts =<AllProduct>[];
   var isLoaded = true;
   var isError=false;
+  var phoneNo = '+91 6379645611';
   @override
   void initState(){
     super.initState();
@@ -43,10 +54,69 @@ class _HomeScreenState extends State<HomeScreen> {
         return _onBackPressed(context);
       },
       child: Scaffold(
+        drawer: Drawer(
+          child:Column(
+            children: [
+              SizedBox(height: 80,),
+              Container(
+                height: 130,
+                width: 130,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString()),
+                ),
+              ),
+              SizedBox(height: 30,),
+              Text(FirebaseAuth.instance.currentUser!.displayName.toString(),
+              style: TextStyle(
+                fontSize: 22,fontWeight: FontWeight.w600,
+              ),),
+              SizedBox(height: 16,),
+              Text(FirebaseAuth.instance.currentUser!.email.toString(),
+                style: TextStyle(
+                  fontSize: 16,fontWeight: FontWeight.w400,
+                ),),
+              SizedBox(height: 30,),
+              Text("RunTime Type :  ${FirebaseAuth.instance.currentUser!.runtimeType.toString()}",
+                style: TextStyle(
+                  fontSize: 13,fontWeight: FontWeight.w400,
+                ),),
+SizedBox(height: 20,),
+              PhoneUrlLauncher(),
+              SizedBox(height: 20,),
+              SmsUrlLauncher(),
+              SizedBox(height: 20,),
+              MailUrlLauncher(),
+              SizedBox(height: 20,),
+              WebUrlLauncher(),
+              SizedBox(height: 20,),
+              ShareButtonWidget(),
+            ],
+          ),
+        ),
        appBar: AppBar(
          title: Text("Home"),
          backgroundColor: Colors.redAccent,
            actions: [
+             Container(
+               height:40,
+               width: 40,
+             margin: EdgeInsets.symmetric(vertical: 10),
+             decoration: BoxDecoration(
+               borderRadius: BorderRadius.circular(50),
+               // color: Colors.green,
+             ),
+               child: InkWell(
+                 child: CircleAvatar(
+                   backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString()),
+                 ),
+                 onTap: () async {
+                   // AuthService().signOut();
+                   _signOut(context);
+                   // await _googleSignIn.signOut();
+                   // await FirebaseAuth.instance.signOut();
+                 },
+               ),
+             ),
              IconButton(onPressed: (){
               Navigator.push(context,MaterialPageRoute(builder: (context)=>AllCategory()));
              },
@@ -58,9 +128,10 @@ class _HomeScreenState extends State<HomeScreen> {
            ],
        ),
 
-        body: isLoaded?Center(
-          child: CircularProgressIndicator(),
-        ):isError?Text("Something went wrong"):
+        body:
+        isLoaded?
+        ShimmerWidget()
+            :isError?Text("Something went wrong"):
        ListView.builder(
            itemCount: allProducts.length,
            itemBuilder: (BuildContext context,index){
@@ -73,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
              //     Navigator.push(context,MaterialPageRoute(builder: (context)=>ProductDetail(id: items.id,)));
              //   },
              // );
-             
+
              return InkWell(
                child: Container(
                  height: 130,
@@ -86,7 +157,8 @@ class _HomeScreenState extends State<HomeScreen> {
                          height: 110,
                          width: 80,
                          margin: EdgeInsets.symmetric(horizontal: 10),
-                         child: Image.network("${items.image}",fit: BoxFit.fill,),
+                         child: Hero(tag: index.toString(),
+                         child: Image.network("${items.image}",fit: BoxFit.fill,)),
                        ),
                        Expanded(
                          child: Column(
@@ -166,6 +238,70 @@ _onBackPressed(BuildContext context) {
             ),
           ),
           // decoration: ,
+        ),
+      ],
+    ),
+  );
+}
+
+_signOut(BuildContext context) {
+  GoogleSignIn _googleSignIn = GoogleSignIn();
+  return showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Are you sure?'),
+      content: const Text('Do you want to LogOut / GSignOut this App ?'),
+      actions: <Widget>[
+        Container(
+          height: 40,
+          width: 80,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Colors.green,
+              border: Border.all(width: 2,color: Colors.green.shade400)
+          ),
+          child: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: const Center(
+              child: Text(
+                "No",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        InkWell(
+          child: Container(
+            // color: Colors.white,
+            height: 40,
+            width: 40,
+            child: Lottie.asset("assets/images/logout_logo.json",
+                fit: BoxFit.cover
+            ),
+          ),
+          onTap: () async {
+            AuthService().signOut();
+            Navigator.pop(context);
+          },
+        ),
+        const SizedBox(height: 16),
+        InkWell(
+          child: Container(
+            // color: Colors.white,
+            height: 40,
+            width: 40,
+            child: Lottie.asset("assets/images/google_logo.json",
+                fit: BoxFit.cover
+            ),
+          ),
+          onTap: () async {
+            await _googleSignIn.signOut();
+            await FirebaseAuth.instance.signOut();
+            Navigator.pop(context);
+          },
         ),
       ],
     ),
