@@ -26,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   List<AllProduct> allProducts =<AllProduct>[];
   var isLoaded = true;
   var isError=false;
@@ -132,57 +133,65 @@ SizedBox(height: 20,),
         isLoaded?
         ShimmerWidget()
             :isError?Text("Something went wrong"):
-       ListView.builder(
-           itemCount: allProducts.length,
-           itemBuilder: (BuildContext context,index){
-             var items=allProducts[index];
-             // return ListTile(
-             //   title: Text("${items.title}"),
-             //   leading: Image.network("${items.image}",height: 50,width: 30,),
-             //   subtitle:
-             //   onTap: (){
-             //     Navigator.push(context,MaterialPageRoute(builder: (context)=>ProductDetail(id: items.id,)));
-             //   },
-             // );
 
-             return InkWell(
-               child: Container(
-                 height: 130,
-                 width: double.infinity,
-                 margin: EdgeInsets.symmetric(vertical: 16),
-                 child: Card(
-                   child:Row(
-                     children: [
-                       Container(
-                         height: 110,
-                         width: 80,
-                         margin: EdgeInsets.symmetric(horizontal: 10),
-                         child: Hero(tag: index.toString(),
-                         child: Image.network("${items.image}",fit: BoxFit.fill,)),
-                       ),
-                       Expanded(
-                         child: Column(
-                           crossAxisAlignment: CrossAxisAlignment.start,
-                           children: [
-                             Container(
-                               margin: EdgeInsets.symmetric(vertical: 20),
-                               width: 240,
-                               child: Text("${items.title}",
-                               ),
-                             ),
-                             Text("Price - \$ ${items.price}"),
-                           ],
+            //Refresh Indicator which is wrapping the listView
+       RefreshIndicator(
+         onRefresh: () {
+           return Future.delayed(Duration(milliseconds: 200),(){
+             setState((){
+               isLoaded=true;
+            Future.delayed(Duration(seconds: 2),(){
+              isLoaded=false;
+              getAllProducts();
+            });
+
+
+             });
+           });
+         },
+         child: ListView.builder(
+             itemCount: allProducts.length,
+             itemBuilder: (BuildContext context,index){
+               var items=allProducts[index];
+               return InkWell(
+                 child: Container(
+                   height: 130,
+                   width: double.infinity,
+                   margin: EdgeInsets.symmetric(vertical: 16),
+                   child: Card(
+                     child:Row(
+                       children: [
+                         Container(
+                           height: 110,
+                           width: 80,
+                           margin: EdgeInsets.symmetric(horizontal: 10),
+                           child: Hero(tag: index.toString(),
+                           child: Image.network("${items.image}",fit: BoxFit.fill,)),
                          ),
-                       )
-                     ],
-                   ) ,
+                         Expanded(
+                           child: Column(
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Container(
+                                 margin: EdgeInsets.symmetric(vertical: 20),
+                                 width: 240,
+                                 child: Text("${items.title}",
+                                 ),
+                               ),
+                               Text("Price - \$ ${items.price}"),
+                             ],
+                           ),
+                         )
+                       ],
+                     ) ,
+                   ),
                  ),
-               ),
-               onTap: (){
-        Navigator.push(context,MaterialPageRoute(builder: (context)=>ProductDetail(id: items.id,)));
+                 onTap: (){
+          Navigator.push(context,MaterialPageRoute(builder: (context)=>ProductDetail(id: items.id,)));
       },
-             );
-           }),
+               );
+             }),
+       ),
 
       ),
     );
