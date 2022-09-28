@@ -47,6 +47,24 @@ class _ProductDetailState extends State<ProductDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    InkWell(
+                        child: Icon(Icons.delete,size: 40,color: Colors.red,),
+                    onTap: ()async{
+                         await RemoteService().deleteProduct('1');
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Item Deleted Successfully !")));
+                        Future.delayed(Duration(seconds: 2),
+                            (){
+                              Navigator.pop(context);
+                            }
+                        );
+                    },
+                    ),
+
+                  ],
+                ),
                 SizedBox(height: 30,),
                 Image.network(singleProduct.image,height: 200,width: double.infinity,),
                 SizedBox(height: 10,),
@@ -84,6 +102,7 @@ class _ProductDetailState extends State<ProductDetail> {
         backgroundColor: Colors.green,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+
     );
   }
 }

@@ -152,4 +152,14 @@ class RemoteService {
     return json.decode(response.body);
   }
 
+  //DELETE
+
+Future deleteProduct(String userId) async{
+    final deleteProductUrl = Uri.parse("https://fakestoreapi.com/carts/$userId");
+    final response = await http.delete(deleteProductUrl);
+    print(response.statusCode);
+    print(response.body);
+    return json.decode(response.body);
+}
+
 }
