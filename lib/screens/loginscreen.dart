@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // labelText: 'Email',
                 hintText: 'Enter Password',
               ),
-            )
+            ),
           ),
           InkWell(
             child: Container(
@@ -117,12 +117,12 @@ class _LoginScreenState extends State<LoginScreen> {
       getToken!["token"] != null) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Login Success !"),
+              content: Text("Login Success But cannot go inside because I commented navigator (Using of google Sign In) !"),
               backgroundColor: Colors.green,));
-        Future.delayed(Duration(seconds:2), () {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => HomeScreen()));
-        });
+        // Future.delayed(Duration(seconds:2), () {
+        //   Navigator.pushReplacement(
+        //       context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        // });
       }
       else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -142,76 +142,36 @@ class _LoginScreenState extends State<LoginScreen> {
           ),),
           SizedBox(height: 10,),
 
-// StreamBuilder<User?>(
-//     stream: FirebaseAuth.instance.authStateChanges(),
-//     builder: (context,snapshot){
-//      return  Container(
-//        margin: EdgeInsets.symmetric(horizontal: 30,vertical: 10),
-//        decoration: BoxDecoration(
-//            borderRadius: BorderRadius.circular(50),
-//            border: Border.all(width: 2,color: Colors.grey.shade400)
-//        ),
-//        padding: EdgeInsets.symmetric(horizontal: 20),
-//        child:
-//        GestureDetector(
-//          child: Row(
-//            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//            children: [
-//              Container(
-//                // color: Colors.white,
-//                height: 40,
-//                width: 40,
-//                child: Lottie.asset("assets/images/google_logo.json",
-//                    fit: BoxFit.cover
-//                ),
-//              ),
-//              Text("SignIn with Google",style:TextStyle(
-//                  fontWeight: FontWeight.bold,
-//                  fontSize:18
-//              ),),
-//            ],
-//          ),
-//          onTap: () async {
-//            // Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
-//            final newuser = await _googleSignIn.signIn();
-//            final googleauth = await newuser!.authentication;
-//            final creds = GoogleAuthProvider.credential(
-//              accessToken: googleauth.accessToken,
-//              idToken: googleauth.idToken,
-//            );
-//            await FirebaseAuth.instance.signInWithCredential(creds);
-//          },
-//        ),
-//      );
-//     }),
-          GestureDetector(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  // color: Colors.white,
-                  height: 40,
-                  width: 40,
-                  child: Lottie.asset("assets/images/google_logo.json",
-                      fit: BoxFit.cover
-                  ),
-                ),
-                Text("SignIn with Google",style:TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize:18
-                ),),
-              ],
+          Container(
+            height: 46,
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(horizontal: 40),
+            decoration: BoxDecoration(
+              border: Border.all(width: 2,color: Colors.grey.shade500),
+              borderRadius: BorderRadius.circular(50),
             ),
-            onTap: () async {
-              // final newuser = await _googleSignIn.signIn();
-              // final googleauth = await newuser!.authentication;
-              // final creds = GoogleAuthProvider.credential(
-              //   accessToken: googleauth.accessToken,
-              //   idToken: googleauth.idToken,
-              // );
-              // await FirebaseAuth.instance.signInWithCredential(creds);
-              AuthService().signInWithGoogle();
-            },
+            child: GestureDetector(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    // color: Colors.white,
+                    height: 40,
+                    width: 40,
+                    child: Lottie.asset("assets/images/google_logo.json",
+                        fit: BoxFit.cover
+                    ),
+                  ),
+                  Text("SignIn with Google",style:TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize:18
+                  ),),
+                ],
+              ),
+              onTap: () async {
+                AuthService().signInWithGoogle();
+              },
+            ),
           ),
 
       ],

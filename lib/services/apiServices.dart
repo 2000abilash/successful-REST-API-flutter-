@@ -162,4 +162,38 @@ Future deleteProduct(String userId) async{
     return json.decode(response.body);
 }
 
+// Future<OtpResponse?> login(String jsons, BuildContext) async {
+//     String url ="http://13.232.193.29/api/user/login";
+//     print(jsons);
+//     var headers = {'Content-Type': 'application/json'};
+//     final response =
+//     await http.post(Uri.parse(url), body: jsons, headers: headers);
+//     print(response.body);
+//     var resdata = json.decode(response.body);
+//     print("object${resdata}");
+//     if (response.statusCode == 200) {
+//       if (resdata["code"] == 200) {
+//         return OtpResponse.fromMap(
+//           json.decode(response.body),
+//         );
+//       } else if(resdata["status"]==5003) {
+//         FlushHelper.showFlushBarMessage(BuildContext, "User is Blocked", " ");
+//         return null;
+//       }
+//       else if(resdata["status"]==5001) {
+//         FlushHelper.showFlushBarMessage(BuildContext, "Please provide Mobile Number or Pin", "");
+//         return null;
+//       }
+//       else if(resdata["status"]==5002) {
+//         FlushHelper.showFlushBarMessage(BuildContext, "Please provide Mobile Number or Pin", "");
+//         return null;
+//       }
+//     } else if (response.statusCode == 400) {
+//       FlushHelper.showFlushBarMessage(BuildContext, ["message"], "");
+//       return null;
+//     } else {
+//       throw Exception('Failed to load data!');
+//     }
+//   }
+
 }

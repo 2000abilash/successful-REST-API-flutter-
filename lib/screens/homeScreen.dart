@@ -27,6 +27,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
+  GoogleSignIn _googleSignIn = GoogleSignIn();
+
   List<AllProduct> allProducts =<AllProduct>[];
   var isLoaded = true;
   var isError=false;
@@ -72,6 +74,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: 22,fontWeight: FontWeight.w600,
               ),),
               SizedBox(height: 16,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: ()async{
+                        await _googleSignIn.signOut();
+                        await FirebaseAuth.instance.signOut();
+                      },
+                      child: Text("SignOut")),
+                  SizedBox(width: 20,),
+                  ElevatedButton(
+                      onPressed: ()async{
+                        AuthService().signOut();
+                      },
+                      child: Text("Logout")),
+                ],
+              ),
+              SizedBox(height: 16,),
               Text(FirebaseAuth.instance.currentUser!.email.toString(),
                 style: TextStyle(
                   fontSize: 16,fontWeight: FontWeight.w400,
@@ -111,10 +131,7 @@ SizedBox(height: 20,),
                    backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString()),
                  ),
                  onTap: () async {
-                   // AuthService().signOut();
                    _signOut(context);
-                   // await _googleSignIn.signOut();
-                   // await FirebaseAuth.instance.signOut();
                  },
                ),
              ),
@@ -125,7 +142,7 @@ SizedBox(height: 20,),
              IconButton(onPressed: (){
                Navigator.push(context,MaterialPageRoute(builder: (context)=>CartScreen()));
              },
-                 icon: Icon(Icons.shopping_cart))
+                 icon: Icon(Icons.numbers_outlined))
            ],
        ),
 
