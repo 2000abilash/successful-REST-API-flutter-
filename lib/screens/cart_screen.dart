@@ -122,7 +122,14 @@ TextEditingController phoneNoController = TextEditingController(text:"7326532868
           SizedBox(height: 20,),
           ElevatedButton(onPressed: (){
           print(controller.text);
-  Navigator.pop(context);
+ if(controller.text.isNotEmpty && controller.text.length == 4){
+   Navigator.pop(context);
+ }else{
+   ScaffoldMessenger.of(context).showSnackBar(
+       SnackBar(
+         content: Text("OTP Field must notbe empty !"),
+         backgroundColor: Colors.redAccent,));
+ }
           }, child: Text("Verify"),),
         ],
       ),

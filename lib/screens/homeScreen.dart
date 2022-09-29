@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,6 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
   GoogleSignIn _googleSignIn = GoogleSignIn();
 
   List<AllProduct> allProducts =<AllProduct>[];
+
+  //this tempAllProducts used for store temporary search in the searchbar
+  List<AllProduct> tempAllProducts =<AllProduct>[];
+
   var isLoaded = true;
   var isError=false;
   var phoneNo = '+91 6379645611';
@@ -37,9 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState(){
     super.initState();
     getAllProducts();
+    print("Hello buddy ${getAllProducts()}");
   }
   getAllProducts() async {
     allProducts = (await RemoteService().getAllProducts())!;
+    tempAllProducts == allProducts;
+    print("SEARCH ${tempAllProducts}");
 
     //This null from api else return value
 
@@ -48,7 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     setState((){
       isLoaded=false;
-
     });
   }
   Widget build(BuildContext context) {
@@ -57,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return _onBackPressed(context);
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         drawer: Drawer(
           child:Column(
             children: [
@@ -146,69 +154,126 @@ SizedBox(height: 20,),
            ],
        ),
 
-        body:
-        isLoaded?
-        ShimmerWidget()
-            :isError?Text("Something went wrong"):
+        body:Column(
+          children: [
+
+            //Search starts from here
+
+            Container(
+  padding: EdgeInsets.all(15),
+  child: TextField(
+    textInputAction: TextInputAction.search,
+    decoration: InputDecoration(
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(25),
+        borderSide: BorderSide(
+          color: Colors.black38,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(20),
+        borderSide: BorderSide(
+          color: Colors.indigoAccent,
+        ),
+      ),
+      suffixIcon: InkWell(
+        child: Icon(Icons.search),
+      ),
+      contentPadding: EdgeInsets.all(15),
+      hintText: "Search",
+    ),
+    onChanged: (e){
+      if(e.isEmpty){
+   tempAllProducts==allProducts;
+   getAllProducts();
+      }else{
+        print(allProducts);
+        tempAllProducts.clear();
+        for (var i in allProducts) {
+print(i.title);
+          if(i.title!.toLowerCase().contains(e.toLowerCase())){
+            tempAllProducts.add(i);
+
+          }
+        }
+      }
+
+    setState((){
+      });
+    },
+
+  ),
+),
+
+            //search ends here
+
+            isLoaded?
+            ShimmerWidget()
+                :isError?Text("Something went wrong"):
 
             //Refresh Indicator which is wrapping the listView
-       RefreshIndicator(
-         onRefresh: () {
-           return Future.delayed(Duration(milliseconds: 200),(){
-             setState((){
-               isLoaded=true;
-            Future.delayed(Duration(seconds: 2),(){
-              isLoaded=false;
-              getAllProducts();
-            });
+            RefreshIndicator(
+              onRefresh: () {
+                return Future.delayed(Duration(milliseconds: 200),(){
+                  setState((){
+                    isLoaded=true;
+                    Future.delayed(Duration(seconds: 2),(){
+                      isLoaded=false;
+                      getAllProducts();
+                    });
+                  });
+                });
+              },
+              child: Container(
+                height: 640,
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: tempAllProducts.length,
+                    itemBuilder: (BuildContext context,index){
+                      var items=tempAllProducts[index];
+                      return InkWell(
+                        child: Container(
+                          height: 130,
+                          width: double.infinity,
+                          margin: EdgeInsets.symmetric(vertical: 16),
+                          child: Card(
+                            child:Row(
+                              children: [
+                                Container(
+                                  height: 110,
+                                  width: 80,
+                                  margin: EdgeInsets.symmetric(horizontal: 10),
+                                  child: Hero(tag: index.toString(),
+                                      child: Image.network("${items.image}",fit: BoxFit.fill,)),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.symmetric(vertical: 20),
+                                        width: 240,
+                                        child: Text("${items.title}",
+                                        ),
+                                      ),
+                                      Text("Price - \$ ${items.price}"),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ) ,
+                          ),
+                        ),
+                        onTap: (){
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=>ProductDetail(id: items.id,)));
+                        },
+                      );
+                    }),
+              ),
+            ),
+          ],
+        ),
 
-
-             });
-           });
-         },
-         child: ListView.builder(
-             itemCount: allProducts.length,
-             itemBuilder: (BuildContext context,index){
-               var items=allProducts[index];
-               return InkWell(
-                 child: Container(
-                   height: 130,
-                   width: double.infinity,
-                   margin: EdgeInsets.symmetric(vertical: 16),
-                   child: Card(
-                     child:Row(
-                       children: [
-                         Container(
-                           height: 110,
-                           width: 80,
-                           margin: EdgeInsets.symmetric(horizontal: 10),
-                           child: Hero(tag: index.toString(),
-                           child: Image.network("${items.image}",fit: BoxFit.fill,)),
-                         ),
-                         Expanded(
-                           child: Column(
-                             crossAxisAlignment: CrossAxisAlignment.start,
-                             children: [
-                               Container(
-                                 margin: EdgeInsets.symmetric(vertical: 20),
-                                 width: 240,
-                                 child: Text("${items.title}",
-                                 ),
-                               ),
-                               Text("Price - \$ ${items.price}"),
-                             ],
-                           ),
-                         )
-                       ],
-                     ) ,
-                   ),
-                 ),
-                 onTap: (){
-          Navigator.push(context,MaterialPageRoute(builder: (context)=>ProductDetail(id: items.id,)));
-      },
-               );
-             }),
-       ),
 
       ),
     );
