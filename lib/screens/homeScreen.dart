@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   getAllProducts() async {
     allProducts = (await RemoteService().getAllProducts())!;
-    tempAllProducts == allProducts;
+    tempAllProducts = allProducts;
     print("SEARCH ${tempAllProducts}");
 
     //This null from api else return value
@@ -184,11 +184,10 @@ SizedBox(height: 20,),
     ),
     onChanged: (e){
       if(e.isEmpty){
-   tempAllProducts==allProducts;
-   getAllProducts();
-      }else{
-        print(allProducts);
-        tempAllProducts.clear();
+   tempAllProducts=allProducts;
+        }else{
+
+       tempAllProducts=[];
         for (var i in allProducts) {
 print(i.title);
           if(i.title!.toLowerCase().contains(e.toLowerCase())){
