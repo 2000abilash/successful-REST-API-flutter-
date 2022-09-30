@@ -187,6 +187,7 @@ SizedBox(height: 20,),
    tempAllProducts=allProducts;
         }else{
 
+        //if we use tempAllProducts.clear() we cannot search (properly) in this application
        tempAllProducts=[];
         for (var i in allProducts) {
 print(i.title);
